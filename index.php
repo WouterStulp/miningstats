@@ -252,7 +252,7 @@
     <div id="footer" class="container">
     <nav class="navbar navbar-inverse navbar-fixed-bottom">
         <div class="navbar-inner navbar-content-center">
-            <p class="text-muted credit" style="text-align: center;">MiningStats Made by: &copy; GiantHoax</p>
+            <p class="text-muted credit" style="text-align: center;">MiningStats Made by: &copy; <a href="https://github.com/GiantHoax">GiantHoax</a></p>
         </div>
     </nav>
 </div>
