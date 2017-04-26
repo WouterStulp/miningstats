@@ -1,6 +1,6 @@
 # MiningStats
 
-This is a simple status page for Ethermine(https://ethermine.org) and Decredpool(http://www.decredpool.org).
+This is a simple status page for Ethermine(https://ethermine.org) and Decredpool(http://www.decredpool.org)(https://dcr.suprnova.cc/).
 
 This page refreshes the stats every 2 minutes, wich is configurable.
 
