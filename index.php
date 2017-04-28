@@ -48,9 +48,10 @@
     $hashrate = $datae["hashRate"];
     $rephash = $datae["reportedHashRate" ];
     $workers = $datae["workers"];
-    $valid = $workers["validShares"];
-    $stale = $workers["staleShares"];
-    $invalid = $workers["invalidShares"];
+    //Old Shares whith one worker.(didnt work with multiple workers.
+    //$valid = $workers["validShares"];
+    //$stale = $workers["staleShares"];
+    //$invalid = $workers["invalidShares"];
     $ethpm = $datae["ethPerMin"];
     $usdpm = $datae["usdPerMin"];
     $balance = $datae["unpaid"];
@@ -95,7 +96,8 @@
     $datausd = file_get_contents('http://api.fixer.io/latest?base=USD');
     $jsonusd = json_decode($datausd);
 ?>
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<div id="wrap">
+<nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -249,12 +251,12 @@
                   </div>
                 </div>
     </div>
-    <div id="footer" class="container">
-    <nav class="navbar navbar-inverse navbar-fixed-bottom">
-        <div class="navbar-inner navbar-content-center">
-            <p class="text-muted credit" style="text-align: center;">MiningStats Made by: &copy; <a href="https://github.com/GiantHoax">GiantHoax</a></p>
-        </div>
-    </nav>
+
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted credit" style="text-align: center;">MiningStats Made by: &copy; <a href="https://github.com/GiantHoax">GiantHoax</a></p>
+      </div>
+    </div>
 </div>
 </body>
 
