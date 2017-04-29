@@ -1,7 +1,7 @@
 <head>
   <meta http-equiv="refresh" content="120"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>HashRate History</title>
+  <title>Shares History</title>
   <link rel="shortcut icon" href="http://bitcoinmacroeconomics.com/wp-content/uploads/2014/05/dogeminer.png" type="image/x-icon" />
   <link rel="stylesheet" href="custom.css" type="text/css">
   <!-- Latest compiled and minified CSS -->
@@ -30,6 +30,28 @@
     $balance = $datae["unpaid"];
     $amount = $datae["payouts"][0]["amount"];
     $payouts = $datae["payouts"]; 
+	
+    $amountsum = 0;
+    foreach($payouts as $p){
+        $amountsum += $p["amount"];
+    };
+    $ethamount = "$balance"+"$amountsum";
+
+    $validsum = 0;
+    foreach($workers as $v){
+        $validsum += $v["validShares"];
+    };
+    
+    $stalesum = 0;
+    foreach($workers as $s){
+        $stalesum += $s["staleShares"];
+    };
+    
+    $invalidsum = 0;
+    foreach($workers as $u){
+        $invalidsum += $u["invalidShares"];
+    };
+
 ?>
 <div id="wrap">
 <nav class="navbar navbar-inverse">
@@ -67,8 +89,9 @@
     echo "<thead>";
     echo "<tr>";
 	echo "<th>Date</th>";
-    echo "<th>Reported Hashrate</th>";
-    echo "<th>Effective hashrate</th>";
+    echo "<th>Valid shares</th>";
+    echo "<th>Invalid shares</th>";
+	echo "<th>Stale shares</th>";
     echo "</tr";
     echo "</thead>";
     echo "<tbody>";
@@ -97,8 +120,8 @@
         echo ' <div class="col-md-4" style="text-align: center;">
                     <h4 class="alert alert-success"><span class="glyphicon glyphicon-random"> </span> <span>Connected to the database</h4>
                 </div>';
-        $sql = "INSERT INTO hashrate (reported, effective)
-        VALUES ('$hashrate', '$rephash')";
+        $sql = "INSERT INTO share (valid, invalid, stale)
+        VALUES ('$validsum', '$invalidsum', '$stalesum' )";
         $conn->exec($sql);
         } 
     catch(PDOException $e)
@@ -110,7 +133,7 @@
     try {
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $conn->prepare("SELECT date, reported, effective FROM hashrate ORDER BY id DESC LIMIT 25"); 
+        $stmt = $conn->prepare("SELECT date, valid, invalid, stale FROM share ORDER BY id DESC LIMIT 25"); 
         $stmt->execute();
 
         // set the resulting array to associative

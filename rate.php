@@ -1,7 +1,7 @@
 <head>
   <meta http-equiv="refresh" content="120"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>MiningStats</title>
+  <title>Price History</title>
   <link rel="shortcut icon" href="http://bitcoinmacroeconomics.com/wp-content/uploads/2014/05/dogeminer.png" type="image/x-icon" />
   <link rel="stylesheet" href="custom.css" type="text/css">
   <!-- Latest compiled and minified CSS -->
@@ -12,6 +12,8 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <?php
+	include 'connection.php';
+
     $json_stringe = 'https://ethermine.org/api/miner_new/Ef74202A92cBDe623Df0945Cfa885D83c3769B21';
     $jsone = file_get_contents($json_stringe);
     $datae = json_decode($jsone,true);
@@ -39,6 +41,7 @@
 
     $ethereur = $jsoneth->price_usd*$jsonusd->rates->EUR;
     $etherusd = $jsoneth->price_usd;
+
 ?>
 <div id="wrap">
 <nav class="navbar navbar-inverse">
@@ -68,13 +71,14 @@
   </div><!-- /.container-fluid -->
 </nav>
 <div class="container">
-     <div class="col-md-4 col-md-offset-4" style="text-align: center;">
+     <div class="col-md-4" style="text-align: center;">
         <h4 class="alert alert-warning"><span class="glyphicon glyphicon-random"> </span> <span> Reload timer: </span><span id="timer">02:00</span></h4>
      </div>
 <?php
     echo "<table class='table table-striped''>";
     echo "<thead>";
     echo "<tr>";
+	echo "<th>Ether Date</th>";
     echo "<th>Ether price in USD</th>";
     echo "<th>Ether Price in EUR</th>";
     echo "</tr";
@@ -97,12 +101,6 @@
             echo "</tr>" . "\n";
         }
     } 
-    $servername = "localhost";
-    $username = "username";
-    $password = "password";
-    $dbname = "minestats";
-
-
     //PUT STUFF IN THE DATABASE
     try {
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -122,7 +120,7 @@
     try {
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $conn->prepare("SELECT usd, eur FROM prijs ORDER BY id DESC LIMIT 10"); 
+        $stmt = $conn->prepare("SELECT date, usd, eur FROM prijs ORDER BY id DESC LIMIT 25"); 
         $stmt->execute();
 
         // set the resulting array to associative

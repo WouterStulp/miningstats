@@ -15,11 +15,7 @@
 </head>
 <body id="content">
 <?php
-
-	//Make connection with Database
-	$servername = "localhost";
-    $username = "username";
-    $password = "password";
+	include 'connection.php';
 
     // Create connection
     $conn = new mysqli($servername, $username, $password);
@@ -30,7 +26,7 @@
     $data = json_decode($json,true);
 
     $userstats = $data["getuserstatus"];
-    $username = $data["getuserstatus"]['data']['username'];
+    //$username = $data["getuserstatus"]['data']['username'];
     $shares = $userstats["data"]["shares"];
     $validshares = $shares["valid"];
     $invalidshares = $shares["invalid"];
@@ -102,6 +98,46 @@
     //wisselkoers base=usd
     $datausd = file_get_contents('http://api.fixer.io/latest?base=USD');
     $jsonusd = json_decode($datausd);
+	
+    $ethereur = $jsoneth->price_usd*$jsonusd->rates->EUR;
+    $etherusd = $jsoneth->price_usd;
+	//add shares to the database
+	try {
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $sql = "INSERT INTO share (valid, invalid, stale)
+        VALUES ('$validsum', '$invalidsum', '$stalesum' )";
+        $conn->exec($sql);
+        } 
+    catch(PDOException $e)
+        {
+        echo "Connection failed: " . $e->getMessage();
+        }
+	
+//add hashrate to the database
+	try {
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $sql = "INSERT INTO hashrate (reported, effective)
+        VALUES ('$hashrate', '$rephash')";
+        $conn->exec($sql);
+        } 
+    catch(PDOException $e)
+        {
+        echo "Connection failed: " . $e->getMessage();
+        }
+	
+	//add price in to the database
+	try {
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $sql = "INSERT INTO prijs (usd, eur) VALUES ('$etherusd', '$ethereur')";
+        $conn->exec($sql);
+        } 
+    catch(PDOException $e)
+        {
+        echo "Connection failed: " . $e->getMessage();
+        }
 ?>
 <div id="wrap">
 <nav class="navbar navbar-inverse">
@@ -126,6 +162,14 @@
         <li><a href="https://wallet.decred.org/#/" target="_blank">Decred Wallet</a></li>
         <li><a href="https://coinmarketcap.com/currencies/ethereum/" target="_blank">Coinmarketcap ETH</a></li>
         <li><a href="https://coinmarketcap.com/currencies/decred/" target="_blank">Coinmarketcap DCR</a></li>
+		<li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Data History <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="share.php">Shares History</a></li>
+            <li><a href="hashrate.php">Hashrate History</a></li>
+            <li><a href="rate.php">Price History</a></li>
+          </ul>
+        </li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
@@ -148,7 +192,7 @@
       </div>
     <div id="shares">
       <div class="col-md-4">
-        <h3 class="alert alert-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Valid shares: <?php echo round("$validsum", 2); ?></h3>
+        <a href="share.php"><h3 class="alert alert-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Valid shares: <?php echo round("$validsum", 2); ?></h3></a>
       </div>
       <div class="col-md-4">
         <h3 class="alert alert-warning"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> Stale shares: <?php echo round("$stalesum", 2)?></h3>
@@ -266,12 +310,6 @@
                     <h3 class="alert alert-success"><span class="glyphicon glyphicon-euro" aria-hidden="true"></span> EUR mined: &euro;<?php echo round(($total*$jsondcr->price_usd*$jsonusd->rates->EUR), 2) ?></h3>
                   </div>
                 </div>
-    </div>
-
-    <div id="footer">
-      <div class="container">
-        <p class="text-muted credit" style="text-align: center;">MiningStats Made by: &copy; <a href="https://github.com/GiantHoax">GiantHoax</a></p>
-      </div>
     </div>
 </div>
 </body>
