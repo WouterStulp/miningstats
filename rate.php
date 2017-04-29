@@ -39,12 +39,6 @@
 
     $ethereur = $jsoneth->price_usd*$jsonusd->rates->EUR;
     $etherusd = $jsoneth->price_usd;
-
-    
-
-    $servername = "localhost";
-    $username = "root";
-    $password = "root";
 ?>
 <div id="wrap">
 <nav class="navbar navbar-inverse">
@@ -104,8 +98,8 @@
         }
     } 
     $servername = "localhost";
-    $username = "root";
-    $password = "root";
+    $username = "username";
+    $password = "password";
     $dbname = "minestats";
 
 
