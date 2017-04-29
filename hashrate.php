@@ -28,11 +28,6 @@
     $balance = $datae["unpaid"];
     $amount = $datae["payouts"][0]["amount"];
     $payouts = $datae["payouts"]; 
-    
-
-    $servername = "localhost";
-    $username = "root";
-    $password = "root";
 ?>
 <div id="wrap">
 <nav class="navbar navbar-inverse">
@@ -92,8 +87,8 @@
         }
     } 
     $servername = "localhost";
-    $username = "root";
-    $password = "root";
+    $username = "username";
+    $password = "password";
     $dbname = "minestats";
 
 
