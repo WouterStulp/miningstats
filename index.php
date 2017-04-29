@@ -16,8 +16,16 @@
 <body id="content">
 <?php
 
+	//Make connection with Database
+	$servername = "localhost";
+    $username = "root";
+    $password = "root";
+
+    // Create connection
+    $conn = new mysqli($servername, $username, $password);
+
     // PASTE HERE YOUR DECREDPOOL API LINK [GET USER STATUS]
-    $json_string = 'PASTE HERE YOUR DECREDPOOL API LINK [GET USER STATUS]';
+    $json_string = 'http://www.decredpool.org/index.php?page=api&action=getuserstatus&api_key=eb8aeaab3889cfe4af42f51c29730ffa294565682fc194ef3afe273411a9a0ee&id=3034';
     $json = file_get_contents($json_string);
     $data = json_decode($json,true);
 
@@ -30,7 +38,7 @@
     $sharerate = $userstats["data"]["sharerate"];
 
     // PASTE HERE YOUR DECREDPOOL API LINK [GET USER BALANCE]
-    $json_string = '// PASTE HERE YOUR DECREDPOOL API LINK [GET USER BALANCE]';
+    $json_string = 'http://www.decredpool.org/index.php?page=api&action=getuserbalance&api_key=eb8aeaab3889cfe4af42f51c29730ffa294565682fc194ef3afe273411a9a0ee&id=3034';
     $json = file_get_contents($json_string);
     $data = json_decode($json,true);
 
@@ -40,7 +48,7 @@
 
 
     //PASTE HERE YOUR ETHERMINE API LINK
-    $json_stringe = 'paste here your ethermine api link';
+    $json_stringe = 'https://ethermine.org/api/miner_new/Ef74202A92cBDe623Df0945Cfa885D83c3769B21';
     $jsone = file_get_contents($json_stringe);
     $datae = json_decode($jsone,true);
 
@@ -48,10 +56,9 @@
     $hashrate = $datae["hashRate"];
     $rephash = $datae["reportedHashRate" ];
     $workers = $datae["workers"];
-    //Old Shares whith one worker.(didnt work with multiple workers.
-    //$valid = $workers["validShares"];
-    //$stale = $workers["staleShares"];
-    //$invalid = $workers["invalidShares"];
+    // $valid = $workers["validShares"];
+    // $stale = $workers["staleShares"];
+    // $invalid = $workers["invalidShares"];
     $ethpm = $datae["ethPerMin"];
     $usdpm = $datae["usdPerMin"];
     $balance = $datae["unpaid"];
@@ -124,10 +131,19 @@
   </div><!-- /.container-fluid -->
 </nav>
 <div class="container">
-      <div class="col-md-4 col-md-offset-8" style="text-align: center;">
+	<div class="col-md-4">
+	 <h4 class="alert alert-success"><span class="glyphicon glyphicon-random"> </span> <?php
+		if ($conn->connect_error) {
+        	die("Connection failed: " . $conn->connect_error);
+    	} 
+    	echo "  Connected to the Database";
+     ?>
+     </h4>
+	</div>
+     <div class="col-md-4 col-md-offset-4" style="text-align: center;">
         <h4 class="alert alert-warning"><span class="glyphicon glyphicon-random"> </span> <span> Reload timer: </span><span id="timer">02:00</span></h4>
-      </div>
-      <div class="col-md-12">
+     </div>
+     <div class="col-md-12">
         <h2 class="col-md-12">Ethereum: </h2>
       </div>
     <div id="shares">
@@ -143,7 +159,7 @@
     </div>
       <div id="hash">
         <div class="col-md-6">
-          <h3 class="alert alert-info"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Hashrate: <?php echo "$rephash"?></h3>
+          <a href="hashrate.php" ><h3 class="alert alert-info"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Hashrate: <?php echo "$rephash"?></h3></a>
         </div>
         <div class="col-md-6">
           <h3 class="alert alert-info"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Effective hashrate: <?php echo "$hashrate"?></h3>
@@ -179,7 +195,7 @@
       </div>
         <div id="koers">
           <div class="col-md-4">
-            <h3 class="alert alert-info"><span class="glyphicon glyphicon-usd" aria-hidden="true"></span> ETH price in USD: $<?php echo round($jsoneth->price_usd, 2) ?></h3>
+            <a href="rate.php"><h3 class="alert alert-info"><span class="glyphicon glyphicon-usd" aria-hidden="true"></span> ETH price in USD: $<?php echo round($jsoneth->price_usd, 2) ?></h3></a>
           </div>
           <div class="col-md-4">
             <h3 class="alert alert-info"><span class="glyphicon glyphicon-euro" aria-hidden="true"></span> ETH price in EUR: &euro;<?php echo round($jsoneth->price_usd*$jsonusd->rates->EUR, 2) ?></h3>
