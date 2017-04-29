@@ -18,8 +18,8 @@
 
 	//Make connection with Database
 	$servername = "localhost";
-    $username = "root";
-    $password = "root";
+    $username = "username";
+    $password = "password";
 
     // Create connection
     $conn = new mysqli($servername, $username, $password);
