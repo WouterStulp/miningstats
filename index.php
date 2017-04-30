@@ -140,40 +140,7 @@
         }
 ?>
 <div id="wrap">
-<nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">MINER-PC</a>
-    </div>
-
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li><a href="#" target="_blank">Ethereum</a></li>
-        <li><a href="#">Decred</a></li>
-        <li><a href="https://myetherwallet.com/#view-wallet-info" target="_blank">Ethereum Wallet</a></li>
-        <li><a href="https://wallet.decred.org/#/" target="_blank">Decred Wallet</a></li>
-        <li><a href="https://coinmarketcap.com/currencies/ethereum/" target="_blank">Coinmarketcap ETH</a></li>
-        <li><a href="https://coinmarketcap.com/currencies/decred/" target="_blank">Coinmarketcap DCR</a></li>
-		<li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Data History <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="share.php">Shares History</a></li>
-            <li><a href="hashrate.php">Hashrate History</a></li>
-            <li><a href="rate.php">Price History</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
+<?php include'navbar.html'?>
 <div class="container">
 	<div class="col-md-4">
 	 <h4 class="alert alert-success"><span class="glyphicon glyphicon-random"> </span> <?php
