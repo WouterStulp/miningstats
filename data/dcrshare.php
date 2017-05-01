@@ -1,49 +1,15 @@
-<?php include 'head.html'?>
 <?php
-	include 'connection.php';
-
-    $json_stringe = 'https://ethermine.org/api/miner_new/Ef74202A92cBDe623Df0945Cfa885D83c3769B21';
-    $jsone = file_get_contents($json_stringe);
-    $datae = json_decode($jsone,true);
-
-    $address = $datae["address"];
-    $hashrate = $datae["hashRate"];
-    $rephash = $datae["reportedHashRate" ];
-    $workers = $datae["workers"];
-    // $valid = $workers["validShares"];
-    // $stale = $workers["staleShares"];
-    // $invalid = $workers["invalidShares"];
-    $ethpm = $datae["ethPerMin"];
-    $usdpm = $datae["usdPerMin"];
-    $balance = $datae["unpaid"];
-    $amount = $datae["payouts"][0]["amount"];
-    $payouts = $datae["payouts"]; 
-	
-    $amountsum = 0;
-    foreach($payouts as $p){
-        $amountsum += $p["amount"];
-    };
-    $ethamount = "$balance"+"$amountsum";
-
-    $validsum = 0;
-    foreach($workers as $v){
-        $validsum += $v["validShares"];
-    };
-    
-    $stalesum = 0;
-    foreach($workers as $s){
-        $stalesum += $s["staleShares"];
-    };
-    
-    $invalidsum = 0;
-    foreach($workers as $u){
-        $invalidsum += $u["invalidShares"];
-    };
-
+  include '../includes/head.html';
+  include '../includes/connection.php';
+  include '../includes/json.php';
+  include '../includes/database.php'
 ?>
 <div id="wrap">
-<?php include'navbar.html';?>
+<?php include'../includes/navdata.html';?>
 <div class="container">
+    <?php 
+    include '../includes/dbconnected.php';
+    ?>
      <div class="col-md-4" style="text-align: center;">
         <h4 class="alert alert-warning"><span class="glyphicon glyphicon-random"> </span> <span> Reload timer: </span><span id="timer">02:00</span></h4>
      </div>
@@ -51,10 +17,9 @@
     echo "<table id='example' class='table table-striped''>";
     echo "<thead>";
     echo "<tr>";
-	echo "<th>Date</th>";
+    echo "<th>Date</th>";
     echo "<th>Valid shares</th>";
     echo "<th>Invalid shares</th>";
-	echo "<th>Stale shares</th>";
     echo "</tr";
     echo "</thead>";
     echo "<tbody>";
@@ -75,28 +40,12 @@
             echo "</tr>" . "\n";
         }
     } 
-
-    //PUT STUFF IN THE DATABASE
+    
+    //GET DATA
     try {
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        echo ' <div class="col-md-4" style="text-align: center;">
-                    <h4 class="alert alert-success"><span class="glyphicon glyphicon-random"> </span> <span>Connected to the database</h4>
-                </div>';
-        $sql = "INSERT INTO share (valid, invalid, stale)
-        VALUES ('$validsum', '$invalidsum', '$stalesum' )";
-        $conn->exec($sql);
-        } 
-    catch(PDOException $e)
-        {
-        echo "Connection failed: " . $e->getMessage();
-        }
-
-        //GET DATA
-    try {
-        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $conn->prepare("SELECT date, valid, invalid, stale FROM share ORDER BY id DESC LIMIT 500"); 
+        $stmt = $conn->prepare("SELECT date, valid, invalid FROM dcrshare ORDER BY id DESC LIMIT 500"); 
         $stmt->execute();
 
         // set the resulting array to associative
@@ -116,8 +65,8 @@
 <script>
 $(document).ready(function() {
     $('#example').DataTable({
-    	"iDisplayLength": 25,
-    	"order": [[ 0, "desc" ]]
+        "iDisplayLength": 25,
+        "order": [[ 0, "desc" ]]
     });
 } );
 var interval = setInterval(function() {

@@ -1,157 +1,18 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta http-equiv="refresh" content="120"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>MiningStats</title>
-  <link rel="shortcut icon" href="http://bitcoinmacroeconomics.com/wp-content/uploads/2014/05/dogeminer.png" type="image/x-icon" />
-  <link rel="stylesheet" href="custom.css" type="text/css">
-  <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <!-- jQuery library -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-  <!-- Latest compiled JavaScript -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-</head>
-<body id="content">
 <?php
-	include 'connection.php';
-
-    // Create connection
-    $conn = new mysqli($servername, $username, $password);
-
-    // PASTE HERE YOUR DECREDPOOL API LINK [GET USER STATUS]
-    $json_string = 'http://www.decredpool.org/index.php?page=api&action=getuserstatus&api_key=eb8aeaab3889cfe4af42f51c29730ffa294565682fc194ef3afe273411a9a0ee&id=3034';
-    $json = file_get_contents($json_string);
-    $data = json_decode($json,true);
-
-    $userstats = $data["getuserstatus"];
-    //$username = $data["getuserstatus"]['data']['username'];
-    $shares = $userstats["data"]["shares"];
-    $validshares = $shares["valid"];
-    $invalidshares = $shares["invalid"];
-    $hash = $userstats["data"]["hashrate"];
-    $sharerate = $userstats["data"]["sharerate"];
-
-    // PASTE HERE YOUR DECREDPOOL API LINK [GET USER BALANCE]
-    $json_string = 'http://www.decredpool.org/index.php?page=api&action=getuserbalance&api_key=eb8aeaab3889cfe4af42f51c29730ffa294565682fc194ef3afe273411a9a0ee&id=3034';
-    $json = file_get_contents($json_string);
-    $data = json_decode($json,true);
-
-    $confirmed = $data["getuserbalance"]["data"]["confirmed"];
-    $unconfirmed = $data["getuserbalance"]["data"]["unconfirmed"];
-    $total = $confirmed+$unconfirmed;
-
-
-    //PASTE HERE YOUR ETHERMINE API LINK
-    $json_stringe = 'https://ethermine.org/api/miner_new/Ef74202A92cBDe623Df0945Cfa885D83c3769B21';
-    $jsone = file_get_contents($json_stringe);
-    $datae = json_decode($jsone,true);
-
-    $address = $datae["address"];
-    $hashrate = $datae["hashRate"];
-    $rephash = $datae["reportedHashRate" ];
-    $workers = $datae["workers"];
-    // $valid = $workers["validShares"];
-    // $stale = $workers["staleShares"];
-    // $invalid = $workers["invalidShares"];
-    $ethpm = $datae["ethPerMin"];
-    $usdpm = $datae["usdPerMin"];
-    $balance = $datae["unpaid"];
-    $amount = $datae["payouts"][0]["amount"];
-    $payouts = $datae["payouts"];
-
-
-    $amountsum = 0;
-    foreach($payouts as $p){
-        $amountsum += $p["amount"];
-    };
-    $ethamount = "$balance"+"$amountsum";
-
-    $validsum = 0;
-    foreach($workers as $v){
-        $validsum += $v["validShares"];
-    };
-    
-    $stalesum = 0;
-    foreach($workers as $s){
-        $stalesum += $s["staleShares"];
-    };
-    
-    $invalidsum = 0;
-    foreach($workers as $u){
-        $invalidsum += $u["invalidShares"];
-    };
-
-    //koers ethereum
-    $dataeth = file_get_contents('https://api.coinmarketcap.com/v1/ticker/ethereum/');
-    $jsoneth = json_decode($dataeth)[0];
-
-    $percent = $jsoneth->percent_change_24h;
-
-    //koers decred
-    $datadcr = file_get_contents('https://api.coinmarketcap.com/v1/ticker/decred/');
-    $jsondcr = json_decode($datadcr)[0];
-
-    $percentdcr = $jsondcr->percent_change_24h;
-
-    //wisselkoers base=usd
-    $datausd = file_get_contents('http://api.fixer.io/latest?base=USD');
-    $jsonusd = json_decode($datausd);
-	
-    $ethereur = $jsoneth->price_usd*$jsonusd->rates->EUR;
-    $etherusd = $jsoneth->price_usd;
-	//add shares to the database
-	try {
-        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = "INSERT INTO share (valid, invalid, stale)
-        VALUES ('$validsum', '$invalidsum', '$stalesum' )";
-        $conn->exec($sql);
-        } 
-    catch(PDOException $e)
-        {
-        echo "Connection failed: " . $e->getMessage();
-        }
-	
-//add hashrate to the database
-	try {
-        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = "INSERT INTO hashrate (reported, effective)
-        VALUES ('$hashrate', '$rephash')";
-        $conn->exec($sql);
-        } 
-    catch(PDOException $e)
-        {
-        echo "Connection failed: " . $e->getMessage();
-        }
-	
-	//add price in to the database
-	try {
-        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = "INSERT INTO prijs (usd, eur) VALUES ('$etherusd', '$ethereur')";
-        $conn->exec($sql);
-        } 
-    catch(PDOException $e)
-        {
-        echo "Connection failed: " . $e->getMessage();
-        }
+  include 'includes/head.html';
+  include 'includes/connection.php';
+  include 'includes/json.php';
+  include 'includes/database.php';
 ?>
 <div id="wrap">
-<?php include'navbar.html'?>
+<?php include'includes/navbar.html';?>
 <div class="container">
-	<div class="col-md-4">
-	 <h4 class="alert alert-success"><span class="glyphicon glyphicon-random"> </span> <?php
-		if ($conn->connect_error) {
-        	die("Connection failed: " . $conn->connect_error);
-    	} 
-    	echo "  Connected to the Database";
-     ?>
-     </h4>
-	</div>
-     <div class="col-md-4 col-md-offset-4" style="text-align: center;">
+    <?php 
+    include 'includes/dbconnected.php';
+    ?>
+     <div class="col-md-4" style="text-align: center;">
         <h4 class="alert alert-warning"><span class="glyphicon glyphicon-random"> </span> <span> Reload timer: </span><span id="timer">02:00</span></h4>
      </div>
      <div class="col-md-12">
