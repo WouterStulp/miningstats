@@ -83,7 +83,7 @@
     try {
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $conn->prepare("SELECT date, usd, eur FROM prijs ORDER BY id DESC LIMIT 200");
+        $stmt = $conn->prepare("SELECT date, usd, eur FROM prijs ORDER BY id DESC LIMIT 500");
         $stmt->execute();
 
         // set the resulting array to associative
@@ -104,7 +104,8 @@
 <script>
 $(document).ready(function() {
     $('#example').DataTable({
-    	"iDisplayLength": 25
+    	"iDisplayLength": 25,
+    	"order": [[ 0, "desc" ]]
     });
 } );
 var interval = setInterval(function() {
